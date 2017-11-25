@@ -1,0 +1,7 @@
+csvFolder
+matFolder
+*.mat
+*.csv
+.DS_Store
+*.asv
+volatilityDemo
