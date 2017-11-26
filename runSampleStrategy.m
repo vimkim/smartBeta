@@ -1,11 +1,27 @@
 clearvars -except crsp ff3 dateList marketIndex
 
-topPercent = .1;
 stratNo = 2;
 
+disp("Program begins!")
+disp(datestr(now, 'HH:MM:SS')); % displays time
 
-
-
+if ~exist('ff3', 'var')
+    ff3Mat = load('matFolder/ff3.mat');
+    ff3 = ff3Mat.ff3;
+end
+if ~exist('crsp', 'var')
+    crspMat = load('matFolder/crsp.mat');
+    crsp = crspMat.crsp;
+end
+if ~exist('dateList', 'var')
+    dateListMat = load('matFolder/dateList.mat');
+    dateList = dateListMat.dateList;
+end
+if ~exist('marketIndex', 'var')
+    marketIndexMat = load('matFolder/marketIndex.mat');
+    marketIndex = marketIndexMat.marketIndex;
+end
+clear ff3Mat crspMat marketIndexMat dateListMat
 
 % this section is just formatting the data. Evan is showing us his work.
 % Evan is great!
@@ -185,12 +201,23 @@ for i = 295:size(thisStrategy,1) % starts from 295 because sigma is available fr
     end 
     
 end
-
+fprintf("making 'thisStrategy' Done! Now evaluating...");
+disp(datestr(now, 'HH:MM:SS'));
 
 thisPerformance=evaluateStrategy(thisStrategy,ff3);
+fprintf("Evaluation Done! Now saving the results ...");
+disp(datestr(now, 'HH:MM:SS'));
 
-save('sampleStrat');
+clear thisPortfolio thisDate ans i 
+
+resultName = strcat('strategy',num2str(stratNo),'Performance');
+save(resultName, 'thisPerformance');
+
+clear resultName
 
 %Plot cumulative returns with dateticks
 %plot(thisPerformance.thisStrategy.datenum,thisPerformance.thisStrategy.cumLogRet);
 %datetick('x','yyyy-mm', 'keepticks', 'keeplimits')
+
+disp("Program ends!")
+disp(datestr(now, 'HH:MM:SS')); % displays time

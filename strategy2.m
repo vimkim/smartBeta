@@ -1,9 +1,6 @@
 function portfolio=strategy2(thisDate,crsp, marketSigma, optionalArgument)
 
-    
-    marketSigma = sqrt(252)*marketSigma % annualized volatility
-    
-    % this must be something marketVol function.
+    marketSigma = sqrt(252)*marketSigma; % annualized volatility
 
     %% Get date from investible universe
     %Match by date
@@ -41,50 +38,46 @@ function portfolio=strategy2(thisDate,crsp, marketSigma, optionalArgument)
     elseif weight < 0.2
         weight = 0.2;
     end
-   
-    weight
 
     port1{:,'w'}=weight;
     port2{:,'w'}=1-weight;
     % standardizes
     port1{:,'w'}=port1.w ./ height(port1);
     port2.w=port2.w ./ height(port2);
-    
+
+    % possible since equal weighted
+    port1w = 0;
+    port2w = 0;
     if height(port1) > 0 & height(port2) > 0
-        port1.w(1)
-        port2.w(2)
+        port1w = port1.w(1);
+        port2w = port2.w(1);
     end
 
     % merge both portfolio
     % commonPermno = intersect(port1.PERMNO,port2.PERMNO);
     mergedPermno = union(port1.PERMNO, port2.PERMNO);
-    mergedPortfolio = table(mergedPermno, 'VariableNames', {'PERMNO'});
-    mergedPortfolio{:,'w'} = 0;
-
-    l = length(mergedPortfolio.PERMNO);
+    l = length(mergedPermno);
+    isMember1 = ismember(mergedPermno, port1.PERMNO);
+    isMember2 = ismember(mergedPermno, port2.PERMNO);
     for i = 1:l
-        thisPermno = mergedPortfolio.PERMNO(i);
-        %if ~isempty(port1{port1.PERMNO == thisPermno,'w'})
-        port1w = port1.w(find(port1.PERMNO == thisPermno, 1));
-        if ~isempty(port1w)
-            mergedPortfolio.w(i) = mergedPortfolio.w(i) + port1w;
+        thisPermno = mergedPermno(i);
+        index = find(thisCrsp.PERMNO == thisPermno, 1);
+
+        w = 0;
+
+        % check if 'thisPermno' exists in port1's PERMNO, and if so, add the weights.
+        if isMember1(i)
+            w = w + port1w;
         end
-        port2w = port2.w(find(port2.PERMNO == thisPermno, 1));
-        if ~isempty(port2w)
-            mergedPortfolio.w(i) = mergedPortfolio.w(i) + port2w;
+        if isMember2(i)
+            w = w + port2w;
         end
-        
+
+        thisCrsp.w(index) = w;
     end
 
     %Standardize investment weights to make sure that 1) There's no short position
-    %thisCrsp{thisCrsp.w<0,'w'}=0;
-
-    % plug it back
-    for i = 1:l % This l is equal to length(mergedPortfolio.PERMNO).
-        thisPermno = mergedPortfolio.PERMNO(i);
-        %thisCrsp{thisCrsp.PERMNO == thisPermno, 'w'} = mergedPortfolio.w(mergedPortfolio.PERMNO == thisPermno);
-        thisCrsp.w(find(thisCrsp.PERMNO == thisPermno, 1)) = mergedPortfolio.w(i);
-    end
+    thisCrsp{thisCrsp.w<0,'w'}=0;
 
     %% Select columns for output
     portfolio=thisCrsp(:,{'PERMNO','w','RET'});
