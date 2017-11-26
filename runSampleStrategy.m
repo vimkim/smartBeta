@@ -192,14 +192,11 @@ for i = 295:size(thisStrategy,1) % starts from 295 because sigma is available fr
         %Calculate returns if there's at least one valid position
         thisStrategy.ret(i)=nansum(thisPortfolio.RET.*thisPortfolio.w);
         
-        
         changePortfolio=outerjoin(thisPortfolio(:,{'PERMNO','w'}),lastPortfolio(:,{'PERMNO','w'}),'Keys','PERMNO');
         %Fill missing positions with zeros
         changePortfolio=fillmissing( changePortfolio,'constant',0);
         thisStrategy.turnover(i)=nansum(abs(changePortfolio.w_left-changePortfolio.w_right))/2;
-
-    end 
-    
+    end
 end
 fprintf("making 'thisStrategy' Done! Now evaluating...");
 disp(datestr(now, 'HH:MM:SS'));
