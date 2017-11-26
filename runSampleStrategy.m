@@ -1,5 +1,9 @@
-topPercent = .1
-stratNo = 2
+clearvars -except crsp ff3 dateList marketIndex
+
+topPercent = .1;
+stratNo = 2;
+
+
 
 
 
@@ -15,15 +19,21 @@ stratNo = 2
 % crsp=crsp(ismember(crsp.PERMNO,permnoList),:);
 % writetable(crsp,'crspTest.csv');
 
+%% Prepare ff3
+
 % ff3=readtable('ff3.csv');
 % ff3.datenum=datenum(num2str(ff3.date),'yyyymmdd');
 % ff3{:,{'mrp','hml','smb'}}=ff3{:,{'mrp','hml','smb'}}/100;
 % writetable(ff3(2010<=year(ff3.datenum)&year(ff3.datenum)<=2014,:),'ff3_20102014.csv')
 
-%% Load ff3 data
-ff3=readtable('csvFolder/ff3_20102014.csv');
+% Load ff3 data
+%ff3=readtable('csvFolder/ff3_20102014.csv');
+%save('matFolder/ff3.mat', 'ff3');
+%ff3Mat = load('matFolder/ff3.mat');
+%ff3 = ff3Mat.ff3;
+%fprintf("ff3 loaded\n");
 
-%%
+%% Prepare CRSP
 % crsp=readtable('crspTest.csv');
 %crsp=readtable('csvFolder/crspCompustatMerged_2010_2014_dailyReturns.csv');
 % 
@@ -54,17 +64,49 @@ ff3=readtable('csvFolder/ff3_20102014.csv');
 % crsp=addEWMA({'RET2'},42,crsp);%variance=Average (r-mu)^2, span of 2 months = 42 days
 % crsp.sigma=sqrt(crsp.ewma42RET2);
 % save('matFolder/crsp.mat');
+% crspMat = load('matFolder/crsp.mat');
+% crsp = crspMat.crsp;
+% fprintf("crsp loaded.\n");
 
-st = load('matFolder/crsp.mat');
-crsp = st.crsp;
+
+% dateList=unique(crsp.datenum);
+%dateListMat = load('matFolder/dateList.mat');
+%dateList = dateListMat.dateList;
 
 
+%% Calculate market sigma
+% 
+% marketIndex = table(dateList, 'VariableNames', {'datenum'});
+% marketIndex{:, 'RET'} = NaN;
+% 
+% l = height(marketIndex);
+% 
+% for i = 1:l
+%     fprintf("i = %d\n", i);
+%     isInvestible = crsp.datenum == marketIndex.datenum(i) & ~isnan(crsp.RET);
+%     investibles = crsp(isInvestible, :);
+%     investibles.valueW = valueWeight(investibles.ME);
+%     marketIndex.RET(i) = sum(investibles.valueW .* investibles.RET);
+% end
+% 
+% clear l
+% 
+% marketIndex{:,'PERMNO'}=99999999;
+% 
+% marketIndex=addLags({'RET'},2,marketIndex);
+% 
+% marketIndex=addEWMA({'lag2RET'},252,marketIndex);%Average return, span of 1 year = 252 days
+% marketIndex.RET2=(marketIndex.RET-marketIndex.ewma252lag2RET).^2;
+% marketIndex=addEWMA({'RET2'},42,marketIndex);%variance=Average (r-mu)^2, span of 2 months = 42 days
+% marketIndex.sigma=sqrt(marketIndex.ewma42RET2);
+% 
+% save('matFolder/marketIndex', 'marketIndex');
+% 
+% marketIndexMat = load('matFolder/marketIndex');
+% marketIndex = marketIndexMat.marketIndex;
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% STRATEGY#1: VALUE TOP 10% AND MOMENTUM
 
-dateList=unique(crsp.datenum);
-
-%Track strategy positions
+%% Track strategy positions
 % create table with variable name being datenum for first column. 
 thisStrategy=table(dateList,'VariableNames',{'datenum'});
 
@@ -88,7 +130,7 @@ elseif stratNo == 1
 %% strat 1
     thisPortfolio = tradeValueMomentum(thisDate, crsp, topPercent);
 elseif stratNo == 2
-    thisPortfolio = strategy2(thisDate, crsp);
+    thisPortfolio = strategy2(thisDate, crsp, marketIndex.sigma(i));
 else
     disp("no strat?")
 end
@@ -111,7 +153,8 @@ if (sum(~isnan(thisPortfolio.w))>0)
 end
 
 fprintf("start iteration..\n");
-for i = 2:size(thisStrategy,1)
+%for i = 253:size(thisStrategy,1) % starts from 253 because momentum is available from this date.
+for i = 295:size(thisStrategy,1) % starts from 295 because sigma is available from this date.
     fprintf("rSS %d\n", i)
     thisDate=thisStrategy.datenum(i);
     lastPortfolio=thisPortfolio;
@@ -122,7 +165,7 @@ for i = 2:size(thisStrategy,1)
     %% strat 1
         thisPortfolio = tradeValueMomentum(thisDate, crsp, topPercent);
     elseif stratNo == 2
-        thisPortfolio = strategy2(thisDate, crsp);
+        thisPortfolio = strategy2(thisDate, crsp, marketIndex.sigma(i));
     else
         disp("no strat?")
     end

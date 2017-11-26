@@ -1,7 +1,8 @@
-function portfolio=strategy2(thisDate,crsp , optionalArgument)
+function portfolio=strategy2(thisDate,crsp, marketSigma, optionalArgument)
 
-    k = 0.2;
-    marketSigma = 0.4;
+    
+    marketSigma = sqrt(252)*marketSigma % annualized volatility
+    
     % this must be something marketVol function.
 
     %% Get date from investible universe
@@ -25,6 +26,10 @@ function portfolio=strategy2(thisDate,crsp , optionalArgument)
     %% extract top 10% value firms
     value10 = thisCrsp(thisCrsp.valueRank >= 0.9,:);
 
+    %% specify partial porfolios
+    port1 = mom10size010;
+    port2 = value10;
+
     %% Create table of investment weights
 
     %fill investment weights with zeros
@@ -36,29 +41,39 @@ function portfolio=strategy2(thisDate,crsp , optionalArgument)
     elseif weight < 0.2
         weight = 0.2;
     end
+   
+    weight
 
-    mom10size010{:,'w'}=weight;
-    value10{:, 'w'}=1-weight;
+    port1{:,'w'}=weight;
+    port2{:,'w'}=1-weight;
     % standardizes
-    mom10size010{:,'w'}=mom10size010.w./nansum(mom10size010.w);
-    value10.w=value10.w./nansum(value10.w);
+    port1{:,'w'}=port1.w ./ height(port1);
+    port2.w=port2.w ./ height(port2);
+    
+    if height(port1) > 0 & height(port2) > 0
+        port1.w(1)
+        port2.w(2)
+    end
 
     % merge both portfolio
-    commonPermno = intersect(mom10size010.PERMNO,value10.PERMNO);
-    mergedPermno = union(mom10size010.PERMNO, value10.PERMNO);
+    % commonPermno = intersect(port1.PERMNO,port2.PERMNO);
+    mergedPermno = union(port1.PERMNO, port2.PERMNO);
     mergedPortfolio = table(mergedPermno, 'VariableNames', {'PERMNO'});
     mergedPortfolio{:,'w'} = 0;
 
     l = length(mergedPortfolio.PERMNO);
     for i = 1:l
         thisPermno = mergedPortfolio.PERMNO(i);
-        %if ~isempty(mom10size010{mom10size010.PERMNO == thisPermno,'w'})
-        if ~isempty(mom10size010.w(find(mom10size010.PERMNO == thisPermno, 1)))
-            mergedPortfolio{mergedPortfolio.PERMNO == thisPermno, 'w'} = mergedPortfolio{mergedPortfolio.PERMNO == thisPermno, 'w'} + mom10size010{mom10size010.PERMNO == thisPermno, 'w'};
+        %if ~isempty(port1{port1.PERMNO == thisPermno,'w'})
+        port1w = port1.w(find(port1.PERMNO == thisPermno, 1));
+        if ~isempty(port1w)
+            mergedPortfolio.w(i) = mergedPortfolio.w(i) + port1w;
         end
-        if ~isempty(value10{value10.PERMNO == thisPermno,'w'})
-            mergedPortfolio{mergedPortfolio.PERMNO == thisPermno, 'w'} = mergedPortfolio{mergedPortfolio.PERMNO == thisPermno, 'w'} + value10{value10.PERMNO == thisPermno, 'w'};
+        port2w = port2.w(find(port2.PERMNO == thisPermno, 1));
+        if ~isempty(port2w)
+            mergedPortfolio.w(i) = mergedPortfolio.w(i) + port2w;
         end
+        
     end
 
     %Standardize investment weights to make sure that 1) There's no short position
