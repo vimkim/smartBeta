@@ -1,16 +1,16 @@
-function portfolio=strategy2(thisDate,crsp, marketSigma, optionalArgument)
+function portfolio=strategy2(thisCrsp, marketSigma)
 
     marketSigma = sqrt(252)*marketSigma; % annualized volatility
 
     %% Get date from investible universe
     %Match by date
-    isInvestible= crsp.datenum==thisDate;
+    %isInvestible= crsp.datenum==thisDate;
 
     %Require that stock is currently still trading (has valid return)
-    isInvestible= isInvestible & ~isnan(crsp.RET);
+    %isInvestible= isInvestible & ~isnan(crsp.RET);
 
     %Extrade relevant data from crsp.
-    thisCrsp=crsp(isInvestible,:);
+    %thisCrsp=crsp(isInvestible,:);
 
     % strategy 2 : 10% M then below 10% small + 10% value
 
@@ -45,36 +45,45 @@ function portfolio=strategy2(thisDate,crsp, marketSigma, optionalArgument)
     port1{:,'w'}=port1.w ./ height(port1);
     port2.w=port2.w ./ height(port2);
 
-    % possible since equal weighted
-    port1w = 0;
-    port2w = 0;
-    if height(port1) > 0 & height(port2) > 0
-        port1w = port1.w(1);
-        port2w = port2.w(1);
-    end
+    % now plug it back?
+    wArr1 = zeros(height(thisCrsp), 1);
+    wArr1(ismember(thisCrsp.PERMNO, port1.PERMNO)) = port1{:, 'w'};
+    wArr2 = zeros(height(thisCrsp), 1);
+    wArr2(ismember(thisCrsp.PERMNO, port2.PERMNO)) = port2{:, 'w'};
+    thisCrsp.w = wArr1 + wArr2;
 
-    % merge both portfolio
-    % commonPermno = intersect(port1.PERMNO,port2.PERMNO);
-    mergedPermno = union(port1.PERMNO, port2.PERMNO);
-    l = length(mergedPermno);
-    isMember1 = ismember(mergedPermno, port1.PERMNO);
-    isMember2 = ismember(mergedPermno, port2.PERMNO);
-    for i = 1:l
-        thisPermno = mergedPermno(i);
-        index = find(thisCrsp.PERMNO == thisPermno, 1);
 
-        w = 0;
+    %% possible since equal weighted
+    %port1w = 0;
+    %port2w = 0;
+    %if height(port1) > 0 & height(port2) > 0
+    %    port1w = port1.w(1);
+    %    port2w = port2.w(1);
+    %end
 
-        % check if 'thisPermno' exists in port1's PERMNO, and if so, add the weights.
-        if isMember1(i)
-            w = w + port1w;
-        end
-        if isMember2(i)
-            w = w + port2w;
-        end
+    %% merge both portfolio
+    %% commonPermno = intersect(port1.PERMNO,port2.PERMNO);
+    %mergedPermno = union(port1.PERMNO, port2.PERMNO);
+    %l = length(mergedPermno);
+    %isMember1 = ismember(mergedPermno, port1.PERMNO);
+    %isMember2 = ismember(mergedPermno, port2.PERMNO);
 
-        thisCrsp.w(index) = w;
-    end
+    %for i = 1:l
+    %    thisPermno = mergedPermno(i);
+    %    index = find(thisCrsp.PERMNO == thisPermno, 1);
+
+    %    w = 0;
+
+    %    % check if 'thisPermno' exists in port1's PERMNO, and if so, add the weights.
+    %    if isMember1(i)
+    %        w = w + port1w;
+    %    end
+    %    if isMember2(i)
+    %        w = w + port2w;
+    %    end
+
+    %    thisCrsp.w(index) = w;
+    %end
 
     %Standardize investment weights to make sure that 1) There's no short position
     thisCrsp{thisCrsp.w<0,'w'}=0;

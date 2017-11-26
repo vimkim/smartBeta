@@ -1,11 +1,16 @@
-clearvars -except crsp ff3 dateList marketIndex
-
-stratNo = 2;
-
 disp("Program begins!")
 disp(datestr(now, 'HH:MM:SS')); % displays time
 
+% Clear variables, but Use previous data if possible.
+clearvars -except crsp ff3 dateList marketIndex thisCrsps
+
+%% User Input
+stratNo = 2;
+
+%% Load missing data
+
 if ~exist('ff3', 'var')
+    fprintf("ff3 not exist");
     ff3Mat = load('matFolder/ff3.mat');
     ff3 = ff3Mat.ff3;
 end
@@ -21,7 +26,11 @@ if ~exist('marketIndex', 'var')
     marketIndexMat = load('matFolder/marketIndex.mat');
     marketIndex = marketIndexMat.marketIndex;
 end
-clear ff3Mat crspMat marketIndexMat dateListMat
+if ~exist('thisCrsps', 'var')
+    thisCrspsMat = load('matFolder/thisCrsps.mat');
+    thisCrsps = thisCrspsMat.thisCrsps;
+end
+clear ff3Mat crspMat marketIndexMat dateListMat thisCrspsMat
 
 % this section is just formatting the data. Evan is showing us his work.
 % Evan is great!
@@ -121,9 +130,12 @@ clear ff3Mat crspMat marketIndexMat dateListMat
 % marketIndexMat = load('matFolder/marketIndex');
 % marketIndex = marketIndexMat.marketIndex;
 
+%% thisCrsps is a table, which consists of two columns: datenum and 'thisCrsp'.
+% thisCrsps = create_thisCrsps(crsp);
+% save('matFolder/thisCrsps.mat', 'thisCrsps');
 
 %% Track strategy positions
-% create table with variable name being datenum for first column. 
+% create table with variable name being datenum for first column.
 thisStrategy=table(dateList,'VariableNames',{'datenum'});
 
 %Create empty column of cells for investment weight tables
@@ -146,7 +158,7 @@ elseif stratNo == 1
 %% strat 1
     thisPortfolio = tradeValueMomentum(thisDate, crsp, topPercent);
 elseif stratNo == 2
-    thisPortfolio = strategy2(thisDate, crsp, marketIndex.sigma(i));
+    thisPortfolio = strategy2(thisCrsps.thisCrsp{i}, marketIndex.sigma(i));
 else
     disp("no strat?")
 end
@@ -181,17 +193,17 @@ for i = 295:size(thisStrategy,1) % starts from 295 because sigma is available fr
     %% strat 1
         thisPortfolio = tradeValueMomentum(thisDate, crsp, topPercent);
     elseif stratNo == 2
-        thisPortfolio = strategy2(thisDate, crsp, marketIndex.sigma(i));
+        thisPortfolio = strategy2(thisCrsps.thisCrsp{i}, marketIndex.sigma(i));
     else
         disp("no strat?")
     end
-    
+
     thisStrategy.portfolio(i)={thisPortfolio}; %Bubble wrap the table of investment weights and store in thisStrategy
-    
+
     if (sum(~isnan(thisPortfolio.w))>0)
         %Calculate returns if there's at least one valid position
         thisStrategy.ret(i)=nansum(thisPortfolio.RET.*thisPortfolio.w);
-        
+
         changePortfolio=outerjoin(thisPortfolio(:,{'PERMNO','w'}),lastPortfolio(:,{'PERMNO','w'}),'Keys','PERMNO');
         %Fill missing positions with zeros
         changePortfolio=fillmissing( changePortfolio,'constant',0);
@@ -205,10 +217,10 @@ thisPerformance=evaluateStrategy(thisStrategy,ff3);
 fprintf("Evaluation Done! Now saving the results ...");
 disp(datestr(now, 'HH:MM:SS'));
 
-clear thisPortfolio thisDate ans i 
+clear thisPortfolio thisDate ans i lastPortfolio
 
 resultName = strcat('strategy',num2str(stratNo),'Performance');
-save(resultName, 'thisPerformance');
+save(resultName, 'thisPerformance', 'changePortfolio');
 
 clear resultName
 
