@@ -1,5 +1,5 @@
 topPercent = .1
-stratNo = 1
+stratNo = 2
 
 
 
@@ -9,7 +9,7 @@ stratNo = 1
 %crsp=readtable('crspTest.csv');
 
 % %Create testData.csv
-% crsp=readtable('crspCompustatMerged_2010_2014_dailyReturns.csv');
+% crsp=readtable('csvFolder/crspCompustatMerged_2010_2014_dailyReturns.csv');
 % permnoList=unique(crsp.PERMNO);
 % permnoList=randsample(permnoList,100);
 % crsp=crsp(ismember(crsp.PERMNO,permnoList),:);
@@ -25,7 +25,7 @@ ff3=readtable('csvFolder/ff3_20102014.csv');
 
 %%
 % crsp=readtable('crspTest.csv');
-% % crsp=readtable('crspCompustatMerged_2010_2014_dailyReturns.csv');
+%crsp=readtable('csvFolder/crspCompustatMerged_2010_2014_dailyReturns.csv');
 % 
 % crsp.datenum=datenum(num2str(crsp.DATE),'yyyymmdd');
 % 
@@ -42,13 +42,17 @@ ff3=readtable('csvFolder/ff3_20102014.csv');
 % %Calculate momentum
 % crsp=addLags({'adjustedPrice'},21,crsp); %this means a month
 % crsp=addLags({'adjustedPrice'},252,crsp);
-% crsp.momentum=crsp.lag21adjustedPrice./crsp.lag252adjustedPrice;
+% crsp.momentum=crsp.lag21adjustedPrice./crsp.lag252adjustedPrice;load train; sound(y,Fs)
 % 
 % crsp=addRank({'size','value','momentum'},crsp);
 % disp("rank added");
 % crsp = addLags({'RET'}, 2, crsp); % add lag2RET column
 % crsp = addEWMA('lag2RET', 42, crsp);
 % crsp = addEWMA('lag2RET', 252, crsp);
+% % %add volatility
+% crsp.RET2=(crsp.RET-crsp.ewma252lag2RET).^2;
+% crsp=addEWMA({'RET2'},42,crsp);%variance=Average (r-mu)^2, span of 2 months = 42 days
+% crsp.sigma=sqrt(crsp.ewma42RET2);
 % save('matFolder/crsp.mat');
 
 st = load('matFolder/crsp.mat');
@@ -84,7 +88,7 @@ elseif stratNo == 1
 %% strat 1
     thisPortfolio = tradeValueMomentum(thisDate, crsp, topPercent);
 elseif stratNo == 2
-    disp("no strat?")
+    thisPortfolio = strategy2(thisDate, crsp);
 else
     disp("no strat?")
 end
@@ -99,27 +103,26 @@ if (sum(~isnan(thisPortfolio.w))>0)
     thisStrategy.ret(i)=nansum(thisPortfolio.RET.*thisPortfolio.w);
 
 
-    changePortfolio=outerjoin(thisPortfolio(:,{'PERMNO','w'}),lastPortfolio(:,{'PERMNO','w'}),'Keys','PERMNO');
+    %changePortfolio=outerjoin(thisPortfolio(:,{'PERMNO','w'}),lastPortfolio(:,{'PERMNO','w'}),'Keys','PERMNO');
     %Fill missing positions with zeros
-    changePortfolio=fillmissing( changePortfolio,'constant',0);
-    thisStrategy.turnover(i)=nansum(abs(changePortfolio.w_left-changePortfolio.w_right))/2;
+    %changePortfolio=fillmissing( changePortfolio,'constant',0);
+    %thisStrategy.turnover(i)=nansum(abs(changePortfolio.w_left-changePortfolio.w_right))/2;
 
 end
-    
-disp("start iteration..");
-for i = 2:size(thisStrategy,1)
 
+fprintf("start iteration..\n");
+for i = 2:size(thisStrategy,1)
+    fprintf("rSS %d\n", i)
     thisDate=thisStrategy.datenum(i);
     lastPortfolio=thisPortfolio;
-   
-    
+
     if stratNo == 0 % baseline
-        thisPortfolio=tradeLongMomentum(thisDate,crsp); 
+        thisPortfolio=tradeLongMomentum(thisDate,crsp);
     elseif stratNo == 1
     %% strat 1
         thisPortfolio = tradeValueMomentum(thisDate, crsp, topPercent);
     elseif stratNo == 2
-        disp("no strat?")
+        thisPortfolio = strategy2(thisDate, crsp);
     else
         disp("no strat?")
     end

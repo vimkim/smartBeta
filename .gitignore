@@ -5,3 +5,5 @@ matFolder
 .DS_Store
 *.asv
 volatilityDemo
+.*
+*.m~
