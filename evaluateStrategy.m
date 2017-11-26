@@ -32,8 +32,6 @@ modelCAPM=fitlm(thisStrategy,'excessRet~mrp');
 %FF3 Regression
 modelFF3=fitlm(thisStrategy,'excessRet~mrp+hml+smb');
 
-%Calculate annualized average holding period, in days.
-averageHoldingPeriod=1/nanmean(thisStrategy.turnover);
 
 %Calculate annualized SHarpe Ratio
 sharpeRatio=nanmean(thisStrategy.excessRet)/nanstd(thisStrategy.excessRet)*sqrt(252);
@@ -52,4 +50,9 @@ thisPerformance.alphaCAPM=(252)*thisPerformance.modelCAPM.Coefficients.Estimate(
 thisPerformance.informationRatio=sqrt(252)*thisPerformance.modelCAPM.Coefficients.Estimate(1)/nanstd(thisPerformance.modelCAPM.Residuals.Raw);
 thisPerformance.modelFF3=modelFF3;
 thisPerformance.alphaFF3=(252)*thisPerformance.modelFF3.Coefficients.Estimate(1);
+
+%Calculate annualized average holding period, in days.
+thisPerformance.averageHoldingPeriod=1/nanmean(thisStrategy.turnover);
+
+
 end

@@ -1,8 +1,8 @@
 csvFolder
-*.mat
 *.csv
 .DS_Store
 *.asv
 volatilityDemo
 .*
 *.m~
+*.mat
