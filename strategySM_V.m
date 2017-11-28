@@ -1,4 +1,4 @@
-function portfolio=strategyMS_V(thisCrsp, marketSigma, mr, sr, vr)
+function portfolio=strategySM_V(thisCrsp, marketSigma, mr, sr, vr)
 
     marketSigma = sqrt(252)*marketSigma; % annualized volatility
 
@@ -12,10 +12,11 @@ function portfolio=strategyMS_V(thisCrsp, marketSigma, mr, sr, vr)
     %Extrade relevant data from crsp.
     %thisCrsp=crsp(isInvestible,:);
 
-    port1 = thisCrsp(thisCrsp.momentumRank >= mr(1) & thisCrsp.momentumRank <= mr(2), :);
-    port1.sizeRank(:) = NaN;
-    port1 = addRank('size', port1);
-    port1 = port1(port1.sizeRank >= sr(1) & port1.sizeRank <= sr(2), :);
+    port1 = thisCrsp(thisCrsp.sizeRank >= sr(1) & thisCrsp.sizeRank <= sr(2), :);
+    port1.momentumRank(:) = NaN;
+    port1 = addRank('momentum', port1);
+    port1 = port1(port1.momentumRank >= mr(1) & port1.momentumRank <= mr(2), :);
+
     port2 = thisCrsp(thisCrsp.valueRank >= vr(1) & thisCrsp.valueRank <= vr(2), :);
 
     %% Create table of investment weights

@@ -251,12 +251,13 @@ function [] = main(strategyNo, crsp, thisCrsps)
             case 7
                 thisPortfolio = strategyMS_V(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1], [0.75 1], [0.9 1]);
             case 8
-                return
+                thisPortfolio = strategySM_V(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1], [0.75 1], [0.9 1]);
             case 9
-                return
+                thisPortfolio = strategySM_V(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1], [0.75 1], [0.9 1]);
             case 10
-                thisPortfolio = strategyMS_V(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1], [0 1], [0.9 1]);
+                thisPortfolio = strategyMS_V(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1], [0 0.25], [0.9 1]);
             case 11
+                return
                 thisPortfolio = reverse_strategyMS_V(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [.75 1],[0 .25],[.75 1]);
             case 12
                 return

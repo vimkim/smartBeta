@@ -1,3 +1,4 @@
+
 function portfolio=strategyMS_V(thisCrsp, marketSigma, mr, sr, vr)
 
     marketSigma = sqrt(252)*marketSigma; % annualized volatility
@@ -26,12 +27,14 @@ function portfolio=strategyMS_V(thisCrsp, marketSigma, mr, sr, vr)
     weight = 0.907 - 1.07 *marketSigma;
     if weight > 0.8
         weight = 0.8;
+        fprintf("w = 0.8!")
     elseif weight < 0.2
         weight = 0.2;
+        fprintf("w = 0.2!")
     end
 
-    port1{:,'w'}=weight;
-    port2{:,'w'}=1-weight;
+    port1{:,'w'}=1-weight;
+    port2{:,'w'}=weight;
     % standardizes
     port1{:,'w'}=port1.w ./ height(port1);
     port2.w=port2.w ./ height(port2);
