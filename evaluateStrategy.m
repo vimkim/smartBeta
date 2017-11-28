@@ -6,14 +6,14 @@ function thisPerformance=evaluateStrategy(thisStrategy,ff3)
 % Project: Smart Beta
 % Purpose:
 %   Return a table of lagged variables
-% 
+%
 % Inputs:
 %                thisStrategy - Strategy history, with returns, turnover,
 %                and datenum
 %
 %                ff3  - table with datenum, risk free rate 'rf', and fama
 %                french factors: 'mrp', 'hml', 'smb'
-% 
+%
 % outputs:
 %                thisPerformance - structure with fields:
 %                   thisStrategy - Strategy history, with returns turnover
@@ -42,8 +42,8 @@ thisStrategy.cumLogRet(~isnan(thisStrategy.ret))=cumsum(log(1+thisStrategy.ret(~
 
 %Create empty struct and fill with outputs
 thisPerformance=[];
-
-thisPerformance.thisStrategy=thisStrategy;
+%thisPerformance.thisStrategy=thisStrategy;
+thisPerformance.cumLogRet=thisStrategy.cumLogRet(end);
 thisPerformance.sharpeRatio=sharpeRatio;
 thisPerformance.modelCAPM=modelCAPM;
 thisPerformance.alphaCAPM=(252)*thisPerformance.modelCAPM.Coefficients.Estimate(1);
