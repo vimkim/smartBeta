@@ -1,5 +1,5 @@
 function portfolio=strategyMS_V(thisCrsp, marketSigma, mr, sr, vr)
-% Function: strategySM_V
+% Function: strategyMS_V
 % Author: Deon, Pegah, Jaskrit
 % Last Modified: 2017-11-29
 % Course: Applied Quantitative Finance Fall 2017 Section 1
@@ -41,8 +41,7 @@ function portfolio=strategyMS_V(thisCrsp, marketSigma, mr, sr, vr)
     % How to make port2: V (value firms)
     port2 = thisCrsp(thisCrsp.valueRank >= vr(1) & thisCrsp.valueRank <= vr(2), :);
 
-    %% Create table of investment weights
-
+%% Create table of investment weights
     %fill investment weights with zeros
     thisCrsp{:,'w'}=0;
 

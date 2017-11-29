@@ -177,15 +177,16 @@ function [] = runStrategy(strategyNo, crsp, thisCrsps, transactionCost)
     % Saving the results for future use in 'results' folder. This mat file will be used in 'loadResults.m' script.
     save(strcat("results/",resultName), 'thisPerformance');
 
-    %Plot cumulative returns, market cumulative returns, and market annualized volatility with dateticks
+    % Plot cumulative returns, market cumulative returns, and market annualized volatility with dateticks
+    % The plot starts from 295th trading day.
+    % marketCumLogRet295 is basically marketIndex.cumLogRet assuming we start from i = 295
     marketCumLogRet295 = marketIndex.cumLogRet - marketIndex.cumLogRet(295);
 
-    plot(dateList(295:end), thisPerformance.thisStrategy.cumLogRet(295:end), dateList(295:end), marketIndex.sigma(295:end)*sqrt(252), ...
-        dateList(295:end), marketCumLogRet295(295:end));
+    plot(dateList(295:end ) , thisPerformance.thisStrategy.cumLogRet(295:end) ,...
+         dateList(295:end ) , marketIndex.sigma(295:end) *sqrt(252 )          ,...
+         dateList(295:end ) , marketCumLogRet295(295:end)) ;
     datetick('x','yyyy-mm', 'keepticks', 'keeplimits')
     lgd = legend('QuantShare strategy cumulative return', 'Annualized market volatility', 'Market cumulative return')
-    %lgd.FontSize = 18;
-    %set(gca, 'FontSize', 18)
     saveas(gcf, strcat('plots/strategy',num2str(strategyNo),'Plot.png'));
 
 

@@ -75,7 +75,7 @@ numStrategies = 17;
 % This specifies the transaction Cost percentage for each trade. (0.002 = .2% of the total trade value)
 transactionCost = 0.002;
 
-% For Evan, we chose strategy 2 as our final strategy. The two lines below make sure that Evan run the code for strategy 2 only. You can always change these into 1 and 17 each to test other strategies.
+% For Evan, we chose strategy 2 as our final strategy. The two lines below make sure that Evan run the code for strategy 2 only. You can always change these to 1 and 17 each to test other strategies.
 starti = 2;
 numStrategies = 2;
 
@@ -91,3 +91,9 @@ end
 % >> make
 % >> main
 % >> loadResults
+
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!

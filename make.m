@@ -4,7 +4,6 @@
 %% Do not forget to read README.md!
 %% Do not forget to read README.md!
 
-
 % Script: make
 % Author: Deon, Pegah, Jaskrit
 % Last Modified: 2017-11-29
@@ -75,15 +74,16 @@ dateList = unique(crsp.datenum);
 save('matFolder/dateList', 'dateList')
 
 %% Prepare ff3.
-ff3=readtable('ff3.csv');
-ff3.datenum=datenum(num2str(ff3.date),'yyyymmdd');
-ff3{:,{'mrp','hml','smb'}}=ff3{:,{'mrp','hml','smb'}}/100;
-
-startYear = 2010
-endYear = 2014
-
-writetable(ff3(startYear<=year(ff3.datenum)&year(ff3.datenum)<=endYear,:),'ff3_20102014.csv')
-
+% if 'ff3_20102014.csv' does not exist, create a new one.
+if ~exist('ff3_20102014.csv', 'file')
+    ff3=readtable('ff3.csv');
+    ff3.datenum=datenum(num2str(ff3.date),'yyyymmdd');
+    ff3{:,{'mrp','hml','smb'}}=ff3{:,{'mrp','hml','smb'}}/100; % divide all values by 100
+    % For data from 2010 to 2014. User should change this value if crsp datenum changes
+    startYear = 2010
+    endYear = 2014
+    writetable(ff3(startYear<=year(ff3.datenum)&year(ff3.datenum)<=endYear,:),'ff3_20102014.csv')
+end
 ff3=readtable('csvFolder/ff3_20102014.csv');
 save('matFolder/ff3.mat', 'ff3');
 
@@ -96,8 +96,14 @@ l = height(marketIndex);
 for i = 1:l
      fprintf("i = %d\n", i);
      isInvestible = crsp.datenum == marketIndex.datenum(i) & ~isnan(crsp.RET);
+     % extract all investible firms
      investibles = crsp(isInvestible, :);
+
+     % give each firms weight relative to its market capitalization
+     % This is basically equal to market index.
      investibles.valueW = sizeWeight(investibles.ME);
+
+     % calculate the market return based on relative market cap weights.
      marketIndex.RET(i) = sum(investibles.valueW .* investibles.RET);
 end
 
