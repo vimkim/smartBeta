@@ -34,7 +34,7 @@
 %% As stated in README.md, place all your csv files inside 'csvFolder' directory.
 % If you do not have one yet, I'll create it for you.
 if ~exist('csvFolder', 'file')
-    fprintf("csvFolder does not exist. Creating one.")
+    fprintf("csvFolder does not exist. Creating one.\n")
     mkdir('csvFolder');
 end
 % This code will not work until you place all the csv-files inside this folder.
@@ -42,12 +42,12 @@ end
 % create MAT files.
 % create directory called 'matFolder' where all the mat-files will be saved.
 if ~exist('matFolder', 'file')
-    fprintf("csvFolder does not exist. Creating one.")
+    fprintf("csvFolder does not exist. Creating one.\n")
     mkdir('matFolder');
 end
 
 %% Prepare crsp.
-fprintf("Preparing crsp.mat...")
+fprintf("Preparing crsp.mat...\n")
 % Most codes are provided by kind and generous Evan. Thank you Evan!
 
 crsp=readtable('csvFolder/crspCompustatMerged_2010_2014_dailyReturns.csv');
@@ -61,11 +61,11 @@ crsp.size=crsp.lag2ME;
 crsp.value=crsp.lag2BE./crsp.lag2ME;
 disp("lag added");
 %Calculate momentum
-fprintf("Calculating momentum...")
+fprintf("Calculating momentum...\n")
 crsp=addLags({'adjustedPrice'},21,crsp); %this means a month
 crsp=addLags({'adjustedPrice'},252,crsp);
 crsp.momentum=crsp.lag21adjustedPrice./crsp.lag252adjustedPrice;
-fprintf("Adding ranks...")
+fprintf("Adding ranks...\n")
 crsp=addRank({'size','value','momentum'},crsp);
 crsp = addLags({'RET'}, 2, crsp); % add lag2RET column
 crsp = addEWMA('lag2RET', 42, crsp);
@@ -78,12 +78,12 @@ save('matFolder/crsp.mat', 'crsp');
 disp("crsp.mat saved.")
 
 %% Prepare dateList.
-fprintf("Preparing dateList.mat");
+fprintf("Preparing dateList.mat...\n");
 dateList = unique(crsp.datenum);
 save('matFolder/dateList', 'dateList')
 
 %% Prepare ff3.
-fprintf("Preparing ff3.mat...");
+fprintf("Preparing ff3.mat...\n");
 % If you only have ff3.csv and does not have ff3_20102014.csv, run the commented code below.
     %ff3=readtable('ff3.csv');
     %ff3.datenum=datenum(num2str(ff3.date),'yyyymmdd');
@@ -96,7 +96,7 @@ ff3=readtable('csvFolder/ff3_20102014.csv');
 save('matFolder/ff3.mat', 'ff3');
 
 %% Prepare marketIndex
-fprintf("Preparing marketIndex.mat...")
+fprintf("Preparing marketIndex.mat...\n")
 marketIndex = table(dateList, 'VariableNames', {'datenum'});
 marketIndex{:, 'RET'} = NaN;
 
@@ -130,9 +130,9 @@ marketIndex.cumLogRet(~isnan(marketIndex.RET))=cumsum(log(1+marketIndex.RET(~isn
 save('matFolder/marketIndex', 'marketIndex');
 
 %% Prepare thisCrsps
-fprintf("Preparing thisCrsps.mat...")
+fprintf("Preparing thisCrsps.mat...\n")
 % thisCrsps is a table, which consists of two columns: datenum and 'thisCrsp'.
 thisCrsps = create_thisCrsps(crsp);
 save('matFolder/thisCrsps.mat', 'thisCrsps');
 
-fprintf("make.m script Done! Now you can run 'main.m'");
+fprintf("make.m script Done! Now you can run 'main.m'\n");

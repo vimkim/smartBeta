@@ -24,15 +24,18 @@
 % How to use this file:
 % Type `>>loadResults` at Matlab Command Window
 % Double Click `results` variable to see the results.
+% Make sure that you adjust the range of for loop using i = start:end
 
 results = {NaN};
-for i = 1:17
+for i = 2:2 % 1:17 to see all the results. For Evan, set to 2
     resultName = strcat('results/strategy', num2str(i), 'Performance')
     results(i,1) = {resultName};
     loaded = load(resultName);
     results(i,2) = {loaded.thisPerformance};
 end
-for i = 2:17
+
+% This is just for excel copy-paste. Not important. Ignore this part.
+for i = 2:2 % 1:17 to see all the results. For Evan, set to 2
     results(i,3) = {results{i,2}.averageHoldingPeriod};
     results(i,4) = {results{i,2}.sharpeRatio};
     results(i,5) = {results{i,2}.informationRatio};
