@@ -1,7 +1,7 @@
 function crsp=addEWMA(variableList,k,crsp)
 % Function: getLags
-% Author: Evan Zhou
-% Laste Modified: 2017-11
+% Author: Evan Zhou / Deon Pegah Jaskrit
+% Laste Modified: 2017-11-29
 % Course: Applied Quantitative Finance
 % Project: Smart Beta
 % Purpose:

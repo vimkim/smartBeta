@@ -1,6 +1,7 @@
-function thisPerformance=evaluateStrategy(thisStrategy,ff3)
-% Function: getLags
+function thisPerformance = evaluateStrategy(thisStrategy,ff3)
+% Function: evaluateStrategy
 % Author: Evan Zhou
+% Thanksfully modified and used by: Team Dexter, thank you so much Evan
 % Laste Modified: 2017-11
 % Course: Applied Quantitative Finance
 % Project: Smart Beta
@@ -41,18 +42,23 @@ thisStrategy{:,'cumLogRet'}=NaN;
 thisStrategy.cumLogRet(~isnan(thisStrategy.ret))=cumsum(log(1+thisStrategy.ret(~isnan(thisStrategy.ret))));
 
 %Create empty struct and fill with outputs
-thisPerformance=[];
-%thisPerformance.thisStrategy=thisStrategy;
-thisPerformance.cumLogRet=thisStrategy.cumLogRet(end);
-thisPerformance.sharpeRatio=sharpeRatio;
-thisPerformance.modelCAPM=modelCAPM;
-thisPerformance.alphaCAPM=(252)*thisPerformance.modelCAPM.Coefficients.Estimate(1);
-thisPerformance.informationRatio=sqrt(252)*thisPerformance.modelCAPM.Coefficients.Estimate(1)/nanstd(thisPerformance.modelCAPM.Residuals.Raw);
-thisPerformance.modelFF3=modelFF3;
-thisPerformance.alphaFF3=(252)*thisPerformance.modelFF3.Coefficients.Estimate(1);
+thisPerformance              = [];
+thisPerformance.thisStrategy = thisStrategy;
+thisPerformance.cumLogRet    = thisStrategy.cumLogRet(end);
+thisPerformance.sharpeRatio  = sharpeRatio;
+thisPerformance.modelCAPM    = modelCAPM;
+thisPerformance.alphaCAPM    = (252)*thisPerformance.modelCAPM.Coefficients.Estimate(1);
+thisPerformance.betaCAPM     = thisPerformance.modelCAPM.Coefficients.Estimate(2);
+
+thisPerformance.informationRatio    = sqrt(252)*thisPerformance.modelCAPM.Coefficients.Estimate(1)/nanstd(thisPerformance.modelCAPM.Residuals.Raw);
+thisPerformance.modelFF3            = modelFF3;
+thisPerformance.alphaFF3            = (252)*thisPerformance.modelFF3.Coefficients.Estimate(1);
+% MRP, SMB, HML consecutively
+thisPerformance.betaFF3             = thisPerformance.modelFF3.Coefficients.Estimate(2:4);
+thisPerformance.informationRatioFF3 = sqrt(252)*thisPerformance.modelFF3.Coefficients.Estimate(1)/nanstd(thisPerformance.modelFF3.Residuals.Raw);
 
 %Calculate annualized average holding period, in days.
-thisPerformance.averageHoldingPeriod=1/nanmean(thisStrategy.turnover);
-
+thisPerformance.averageTurnover      = nanmean(thisStrategy.turnover);
+thisPerformance.averageHoldingPeriod = 1 / thisPerformance.averageTurnover;
 
 end

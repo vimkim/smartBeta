@@ -1,30 +1,88 @@
-if ~exist('ff3', 'var')
-    fprintf("ff3 not exist. Loading...\n");
-    ff3Mat = load('matFolder/ff3.mat');
-    ff3 = ff3Mat.ff3;
-end
+% Script: main
+% Author: Deon, Pegah, Jaskrit
+% Last Modified: 2017-11-29
+% Course: Applied Quantitative Finance Fall 2017 Section 1
+% Project: Smart Beta (Assignment 3)
+% Team name: Dexter
+% Purpose:
+        % This main file is necessary in order to automate between strategies. The original example files Evan provided us is only capable of performing a single strategy at a time.
+        % This is a wrapper script for 'runStrategy.m', which iterates through
+        % different arguments and performs 'runStrategy' function multiple times with
+        % different inputs.
+
+        % How to run: just simply type 'main' in the matlab command window.
+        % >> main
+
+% Inputs: N/A (script)
+% outputs: N/A (script)
+% File dependency
+% main --- runStrategy --- evaluateStrategy
+%                       ** All the strategy functions **
+%                      \-- strategySM_V
+%                      \-- strategyM_VS
+%                      \-- strategyMS_V
+%                      \-- reverse_strategyMS_V
+%                       ********************************
+%                      \-- 
+%                      \-- 
+%                      \-- 
+%
+
+%
+
+% What are these two if statements?
+% It looks up the matlab Workspace, checks if 'crsp' and 'thisCrsps'
+% variables exist in there, and if not, it loads them to Workspace.
+
+% Why is this in main function?
+% This is to improve performance speed of the runStrategy function.
+% Since it takes too much time to read and load 'crsp.mat' and 'thisCrsps.mat'
+% which contains 'crsp' and 'thisCrsps' variables, by passing these
+% variables as a function argument instead of reloading everytime, we can
+% significantly improve the performance speed.
+
+
+% This if statement checks whether 'crsp' exists in the workspace. If it does not exist then it
+% loads 'crsp' from 'crsp.mat', contained in the 'matFolder'.
 if ~exist('crsp', 'var')
     fprintf("crsp not exist. Loading...\n");
     crspMat = load('matFolder/crsp.mat');
     crsp = crspMat.crsp;
 end
-if ~exist('dateList', 'var')
-    fprintf("dateList not exist. Loading...\n");
-    dateListMat = load('matFolder/dateList.mat');
-    dateList = dateListMat.dateList;
-end
-if ~exist('marketIndex', 'var')
-    fprintf("marketIndex not exist. Loading...\n");
-    marketIndexMat = load('matFolder/marketIndex.mat');
-    marketIndex = marketIndexMat.marketIndex;
-end
+
+% This if statement checks whether 'thisCrsps' exists in the workspace. If it does not exist then it
+% loads 'thisCrsps' from 'thisCrsps.mat', contained in the 'matFolder'.
 if ~exist('thisCrsps', 'var')
     fprintf("thisCrsps not exist. Loading...\n");
     thisCrspsMat = load('matFolder/thisCrsps.mat');
     thisCrsps = thisCrspsMat.thisCrsps;
 end
+% Clear unnecessary, dirty variables to make matlab workspace cleaner.
 clear ff3Mat crspMat marketIndexMat dateListMat thisCrspsMat
 
-for i = 1:17
-    runStrategy(i, crsp, thisCrsps);
+
+% number of strategies to be tested. Do not confuse with StrategyNo.
+% This exists to specify the number of iterations in the next for loop.
+numStrategies = 17;
+% This for loop performs runStrategy function multiple times with different input i.
+% Here, i is the StrategyNo (strategy number) dedicated to call a specific strategy.
+% Instead of typing every single strategies one by one, we specify how many strategies there are, and matlab analyzes them all at once.
+% This specifies the transaction Cost percentage for each trade. (0.002 = .2% of the total trade value)
+transactionCost = 0.002;
+
+% For Evan, we chose strategy 2 as our final strategy. The two lines below make sure that Evan run the code for strategy 2 only. You can always change these into 1 and 17 each to test other strategies.
+starti = 2;
+numStrategies = 2;
+
+for i = starti:numStrategies
+    runStrategy(i, crsp, thisCrsps, transactionCost);
 end
+
+% After running this file, all the results are saved in 'results' folder. You can load and see the results by running 'loadResults.m'.
+
+% Summary of the workflow:
+%
+% How: (just type in Matlab Command Window)
+% >> make
+% >> main
+% >> loadResults
