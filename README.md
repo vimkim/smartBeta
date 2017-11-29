@@ -35,7 +35,7 @@ type the following in the Matlab Command Window.
 ```
 >> load('strategy2Performance');
 ```
-Or, you can use 'loadResult.m' script to create 'results' variable which contains all the performance results from each strategy.
+Or, you can use 'loadResult.m' script to create 'loaded' and 'results' variable which contain all the performance results from each strategy.
 
 ## What is 'thisCrsps'? Why does it look so different from Evan's example code?
 Since we had a considerable number of strategies to test on, and it took too much time for them to run, we needed to automate the process and optimize the speed of code as possible as we can.
