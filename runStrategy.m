@@ -1,3 +1,9 @@
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+
 function [] = runStrategy(strategyNo, crsp, thisCrsps, transactionCost)
 % Function: runStrategy
 % Author: Deon, Pegah, Jaskrit

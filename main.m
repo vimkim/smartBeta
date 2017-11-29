@@ -1,3 +1,9 @@
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+
 % Script: main
 % Author: Deon, Pegah, Jaskrit
 % Last Modified: 2017-11-29

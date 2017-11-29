@@ -1,3 +1,9 @@
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+%% Do not forget to read README.md!
+
 %% create MAT files.
 % Make directory called 'matFolder'
 mkdir('matFolder');
