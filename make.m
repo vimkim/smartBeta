@@ -33,32 +33,40 @@
 
 %% As stated in README.md, place all your csv files inside 'csvFolder' directory.
 % If you do not have one yet, I'll create it for you.
-mkdir('csvFolder');
+if ~exist('csvFolder', 'file')
+    fprintf("csvFolder does not exist. Creating one.")
+    mkdir('csvFolder');
+end
 % This code will not work until you place all the csv-files inside this folder.
 
-%% create MAT files.
-
+% create MAT files.
 % create directory called 'matFolder' where all the mat-files will be saved.
-mkdir('matFolder');
+if ~exist('matFolder', 'file')
+    fprintf("csvFolder does not exist. Creating one.")
+    mkdir('matFolder');
+end
 
 %% Prepare crsp.
+fprintf("Preparing crsp.mat...")
 % Most codes are provided by kind and generous Evan. Thank you Evan!
 
 crsp=readtable('csvFolder/crspCompustatMerged_2010_2014_dailyReturns.csv');
 crsp.datenum=datenum(num2str(crsp.DATE),'yyyymmdd');
 disp("datenum added");
 % Calculate momentum size and value
+fprintf("add Lags ME, BE")
 crsp=addLags({'ME','BE'},2,crsp);
 % this means market size, not height/width.
 crsp.size=crsp.lag2ME;
 crsp.value=crsp.lag2BE./crsp.lag2ME;
 disp("lag added");
 %Calculate momentum
+fprintf("Calculating momentum...")
 crsp=addLags({'adjustedPrice'},21,crsp); %this means a month
 crsp=addLags({'adjustedPrice'},252,crsp);
 crsp.momentum=crsp.lag21adjustedPrice./crsp.lag252adjustedPrice;
+fprintf("Adding ranks...")
 crsp=addRank({'size','value','momentum'},crsp);
-disp("rank added");
 crsp = addLags({'RET'}, 2, crsp); % add lag2RET column
 crsp = addEWMA('lag2RET', 42, crsp);
 crsp = addEWMA('lag2RET', 252, crsp);
@@ -70,24 +78,25 @@ save('matFolder/crsp.mat', 'crsp');
 disp("crsp.mat saved.")
 
 %% Prepare dateList.
+fprintf("Preparing dateList.mat");
 dateList = unique(crsp.datenum);
 save('matFolder/dateList', 'dateList')
 
 %% Prepare ff3.
-% if 'ff3_20102014.csv' does not exist, create a new one.
-if ~exist('ff3_20102014.csv', 'file')
-    ff3=readtable('ff3.csv');
-    ff3.datenum=datenum(num2str(ff3.date),'yyyymmdd');
-    ff3{:,{'mrp','hml','smb'}}=ff3{:,{'mrp','hml','smb'}}/100; % divide all values by 100
-    % For data from 2010 to 2014. User should change this value if crsp datenum changes
-    startYear = 2010
-    endYear = 2014
-    writetable(ff3(startYear<=year(ff3.datenum)&year(ff3.datenum)<=endYear,:),'ff3_20102014.csv')
-end
+fprintf("Preparing ff3.mat...");
+% If you only have ff3.csv and does not have ff3_20102014.csv, run the commented code below.
+    %ff3=readtable('ff3.csv');
+    %ff3.datenum=datenum(num2str(ff3.date),'yyyymmdd');
+    %ff3{:,{'mrp','hml','smb'}}=ff3{:,{'mrp','hml','smb'}}/100; % divide all values by 100
+    %% For data from 2010 to 2014. User should change this value if crsp datenum changes
+    %startYear = 2010
+    %endYear = 2014
+    %writetable(ff3(startYear<=year(ff3.datenum)&year(ff3.datenum)<=endYear,:),'ff3_20102014.csv')
 ff3=readtable('csvFolder/ff3_20102014.csv');
 save('matFolder/ff3.mat', 'ff3');
 
 %% Prepare marketIndex
+fprintf("Preparing marketIndex.mat...")
 marketIndex = table(dateList, 'VariableNames', {'datenum'});
 marketIndex{:, 'RET'} = NaN;
 
@@ -121,6 +130,9 @@ marketIndex.cumLogRet(~isnan(marketIndex.RET))=cumsum(log(1+marketIndex.RET(~isn
 save('matFolder/marketIndex', 'marketIndex');
 
 %% Prepare thisCrsps
+fprintf("Preparing thisCrsps.mat...")
 % thisCrsps is a table, which consists of two columns: datenum and 'thisCrsp'.
 thisCrsps = create_thisCrsps(crsp);
 save('matFolder/thisCrsps.mat', 'thisCrsps');
+
+fprintf("make.m script Done! Now you can run 'main.m'");
