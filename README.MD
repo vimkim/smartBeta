@@ -5,6 +5,10 @@ Course: Applied Quantitative Finance Fall 2017 Section 1
 Project: Smart Beta (Assignment 3)
 Team name: Dexter
 
+** This code is also uploaded on github. If you think reading long comments in MATLAB editor being too obnoxious, try typing the following url in your browser: **
+
+https://github.com/dqgthb/smartBeta
+
 ## Prerequisite step for running this code:
 - You need to create `marketIndex.mat` inside
 - You need to create `thisCrsps.mat`
