@@ -15,6 +15,7 @@ https://github.com/dqgthb/smartBeta
 - You need to create `crsp.mat`
 - You need to create `ff3.mat`
 - You need to create `dateList.mat`
+
 These mat-files will be automatically created if you run 'make.m' script.
 Type the following in the Matlab Command Window, if you are running this code for the first time.
 ```
