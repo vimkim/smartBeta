@@ -19,24 +19,23 @@
         % How to run: just simply type 'main' in the matlab command window.
         % >> main
 
-% Inputs: N/A (script)
-% outputs: N/A (script)
+% Inputs: N/A (script, not a function)
+% outputs: N/A (script, not a function)
 % File dependency
-% main --- runStrategy --- evaluateStrategy
-%                       ** All the strategy functions **
-%                      \-- strategySM_V
-%                      \-- strategyM_VS
-%                      \-- strategyMS_V
-%                      \-- reverse_strategyMS_V
-%                       ********************************
-%                      \-- 
-%                      \-- 
-%                      \-- 
-%
+% main --- runStrategy.m ---------- evaluateStrategy.m
+%      \               \
+%      \               \-- strategySM_V.m
+%      \               \-- strategyM_VS.m
+%      \               \-- strategyMS_V.m
+%      \               \-- reverse_strategyMS_V.m
+%      \               \-- matFolder/ff3.mat
+%      \               \-- matFolder/dateList.mat
+%      \               \-- matFolder/marketIndex.mat
+%      \
+%      \-- matFolder/crsp.mat
+%      \-- matFolder/thisCrsps.mat
 
-%
-
-% What are these two if statements?
+% What are the two if statements below?
 % It looks up the matlab Workspace, checks if 'crsp' and 'thisCrsps'
 % variables exist in there, and if not, it loads them to Workspace.
 

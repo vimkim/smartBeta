@@ -9,15 +9,15 @@ Team name: Dexter
 
 https://github.com/dqgthb/smartBeta
 
-## Prerequisite step for running this code:
-- You need to create `marketIndex.mat` inside
-- You need to create `thisCrsps.mat`
-- You need to create `crsp.mat`
-- You need to create `ff3.mat`
-- You need to create `dateList.mat`
-
+## Prerequisite step for running this code (required only for once):
+- You need to create `marketIndex.mat` inside `matFolder` directory.
+- You need to create `thisCrsps.mat` inside `matFolder` directory.
+- You need to create `crsp.mat` inside `matFolder` directory.
+- You need to create `ff3.mat` inside `matFolder` directory.
+- You need to create `dateList.mat` inside `matFolder` directory.
 These mat-files will be automatically created if you run 'make.m' script.
-Type the following in the Matlab Command Window, if you are running this code for the first time.
+In order to run 'make.m' script, you need to first create a folder named 'csvFolder' inside this smartBeta project directory. Place all your relevant 'crsp.csv' and 'ff3.csv' inside 'csvFolder'.
+Type the following in the Matlab Command Window.
 ```
 >> make
 ```
