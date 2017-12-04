@@ -76,12 +76,16 @@ numStrategies = 17;
 transactionCost = 0.002;
 
 % For Evan, we chose strategy 2 as our final strategy. The two lines below make sure that Evan run the code for strategy 2 only. You can always change these to 1 and 17 each to test other strategies.
-starti = 2;
-numStrategies = 2;
+
+starti = 25;
+numStrategies = 28;
 
 for i = starti:numStrategies
     runStrategy(i, crsp, thisCrsps, transactionCost);
 end
+
+%stratNum = 19;
+%runStrategy(stratNum, crsp, thisCrsps, transactionCost);
 
 % After running this file, all the results are saved in 'results' folder. You can load and see the results by running 'loadResults.m'.
 
