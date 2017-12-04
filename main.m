@@ -77,8 +77,8 @@ transactionCost = 0.002;
 
 % For Evan, we chose strategy 2 as our final strategy. The two lines below make sure that Evan run the code for strategy 2 only. You can always change these to 1 and 17 each to test other strategies.
 
-starti = 37;
-numStrategies = 42;
+starti = 56;
+numStrategies = 56;
 
 for i = starti:numStrategies
     runStrategy(i, crsp, thisCrsps, transactionCost);

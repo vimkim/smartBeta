@@ -26,12 +26,13 @@ function [] = runStrategy(strategyNo, crsp, thisCrsps, transactionCost)
         % - In case you are wondering 'what is thisCrsp?', check the tradeLongMomentum.m Evan provided us as an example. This is simply a crsp table with firms investible at a specific datenum.
 % Outputs:
 
+
     fprintf("\n");
     disp("Program begins!")
     disp(datestr(now, 'HH:MM:SS')); % displays time when running this function.
 
     % clean up unnecessary variables, just for debugging purpose.
-    clearvars -except crsp ff3 dateList marketIndex thisCrsps strategyNo transactionCost
+    %clearvars -except crsp ff3 dateList marketIndex thisCrsps strategyNo transactionCost
 
     %% Input (function argument)
     % prints the values of 'strategyNo' and 'transactionCost', just for debugging purposes.
@@ -75,7 +76,6 @@ function [] = runStrategy(strategyNo, crsp, thisCrsps, transactionCost)
     %Create empty column of NaNs for ret
     thisStrategy{:,'ret'}=NaN;
     thisStrategy{:,'turnover'}=NaN;
-    thisStrategy{:,'ret_net'}=NaN;
 
     fprintf("start iteration..\n");
     n = 0;
@@ -143,63 +143,98 @@ function [] = runStrategy(strategyNo, crsp, thisCrsps, transactionCost)
                 thisPortfolio = strategyMS_V(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.75 1], [0 0.1], [0.9 1]);
             case 16
                 thisPortfolio = strategyMS_V(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.5 1], [0 0.1], [0.9 1]);
-            case 17
+            case 17 % winner90-small10 & high10
                 thisPortfolio = strategyMS_V(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.1 1], [0 0.1], [0.9 1]);
-            case 18
+            case 18 % dynamic small10 & value10
                 thisPortfolio = strategyMS_V(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 1], [0 0.1], [0.9 1]);
 
-            case 19 % pure momentum-size (loser)
+            case 19 % pure momentum-size (loser10-small10)
                 thisPortfolio = strategyMS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .1], [0 0.1]);
-            case 20 % pure momentum-size with increased mom range (loser)
+            case 20 % pure momentum-size (loser30-small10)
                 thisPortfolio = strategyMS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .3], [0 0.1]);
-            case 21 % pure momentum-size with increased size range (loser)
+            case 21 % pure momentum-size (loser10-small30)
                 thisPortfolio = strategyMS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .1], [0 0.3]);
-            case 22 % pure momentum-size (winner)
+
+            case 22 % pure momentum-size (winner10-small10)
                 thisPortfolio = strategyMS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1], [0 0.1]);
-            case 23 % pure momentum-size with increased mom range (winner)
+            case 23 % pure momentum-size (winner30-small10)
                 thisPortfolio = strategyMS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.7 1], [0 0.1]);
-            case 24 % pure momentum-size with increased size range (winner)
+            case 24 % pure momentum-size (winner10-small30)
                 thisPortfolio = strategyMS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1], [0 0.3]);
 
-            case 25 % pure value (winner)
+            case 25 % pure value (high10)
                 thisPortfolio = strategyV(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1]);
-            case 26 % pure value (winner)
+            case 26 % pure value (high30)
                 thisPortfolio = strategyV(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.7 1]);
-            case 27 % pure value (loser)
+            case 27 % pure value (low10)
                 thisPortfolio = strategyV(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .1]);
-            case 28 % pure value (loser)
+            case 28 % pure value (low30)
                 thisPortfolio = strategyV(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .3]);
 
-            case 29 % pure size (small 10%)
+            case 29 % pure size (small10)
                 thisPortfolio = strategyS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .1]);
-            case 30 % pure size (small 30%)
+            case 30 % pure size (small30)
                 thisPortfolio = strategyS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .3]);
-            case 31 % pure size (large 10%)
+            case 31 % pure size (large10)
                 thisPortfolio = strategyS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.7 1]);
-            case 32 % pure size (large 30%)
+            case 32 % pure size (large30)
                 thisPortfolio = strategyS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1]);
 
-            case 33 % pure momentum (small 10%)
+            case 33 % pure momentum (small10)
                 thisPortfolio = strategyM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .1]);
-            case 34 % pure momentum (small 30%)
+            case 34 % pure momentum (small30)
                 thisPortfolio = strategyM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .3]);
-            case 35 % pure momentum (large 10%)
+            case 35 % pure momentum (large10)
                 thisPortfolio = strategyM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.7 1]);
-            case 36 % pure momentum (large 30%)
+            case 36 % pure momentum (large30)
                 thisPortfolio = strategyM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1]);
 
-            case 37 % pure size-momentum (loser)
+            case 37 % pure size-momentum (small10-loser10)
                 thisPortfolio = strategySM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .1], [0 0.1]);
-            case 38 % pure size-momentum with increased mom range (loser)
+            case 38 % pure size-momentum (small10-loser30)
                 thisPortfolio = strategySM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .3], [0 0.1]);
-            case 39 % pure size-momentum with increased size range (loser)
+            case 39 % pure size-momentum (small30-loser10)
                 thisPortfolio = strategySM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .1], [0 0.3]);
-            case 40 % pure size-momentum (winner)
+
+            case 40 % pure size-momentum (small10-winner10)
                 thisPortfolio = strategySM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1], [0 0.1]);
-            case 41 % pure size-momentum with increased mom range (winner)
+            case 41 % pure size-momentum (small10-winner30)
                 thisPortfolio = strategySM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.7 1], [0 0.1]);
-            case 42 % pure size-momentum with increased size range (winner)
+            case 42 % pure size-momentum (small30-winner10)
                 thisPortfolio = strategySM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1], [0 0.3]);
+
+            case 43 % pure size-momentum (large10-winner10)
+                thisPortfolio = strategySM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1], [.9 1]);
+            case 44 % pure size-momentum (large10-winner30)
+                thisPortfolio = strategySM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.7 1], [.9 1]);
+            case 45 % pure size-momentum (large30-winner10)
+                thisPortfolio = strategySM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0.9 1], [.7 1]);
+
+            case 46 % pure size-momentum (large10-loser10)
+                thisPortfolio = strategySM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .1], [.9 1]);
+            case 47 % pure size-momentum (large10-loser30)
+                thisPortfolio = strategySM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .3], [.9 1]);
+            case 48 % pure size-momentum (large30-loser10)
+                thisPortfolio = strategySM(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .1], [.7 1]);
+
+            case 49 % pure size-value (small10-high10)
+                thisPortfolio = strategySV(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .1], [.9 1]);
+            case 50 % pure size-value (small10-high30)
+                thisPortfolio = strategySV(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .1], [.7 1]);
+            case 51 % pure size-value (small30-high10)
+                thisPortfolio = strategySV(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .3], [.9 1]);
+
+            % extraordinary performance
+            case 52 % pure value-size (high10-small10)
+                thisPortfolio = strategyVS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .1], [.9 1]);
+            case 53 % pure value-size (high30-small10)
+                thisPortfolio = strategyVS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .1], [.7 1]);
+            case 54 % pure value-size (high10-small30)
+                thisPortfolio = strategyVS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .3], [.9 1]);
+            case 55 % pure value-size (high5-small5)
+                thisPortfolio = strategyVS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .05], [.95 1]);
+            case 56 % pure value-size (high2.5-small2.5)
+                thisPortfolio = strategyVS(thisCrsps.thisCrsp{i}, marketIndex.sigma(i), [0 .025], [.975 1]);
 
             otherwise
                 disp("wrong strategy number!");
@@ -221,6 +256,14 @@ function [] = runStrategy(strategyNo, crsp, thisCrsps, transactionCost)
             end
         end
     end
+
+    thisStrategy.firmNum = NaN(height(thisStrategy), 1);
+    for i=1:height(thisStrategy)
+        if cellfun(@(c) istable(c), (thisStrategy.portfolio(i)))
+            thisStrategy.firmNum(i) = sum(thisStrategy.portfolio{i}.w ~= 0);
+        end
+    end
+
     fprintf("\nmaking 'thisStrategy' Done! Now evaluating...\n");
     disp(datestr(now, 'HH:MM:SS'));
 

@@ -1,14 +1,10 @@
-function portfolio=strategyMS(thisCrsp, marketSigma, mr, sr)
+function portfolio=strategySV(thisCrsp, marketSigma, sr, vr)
     marketSigma = sqrt(252)*marketSigma; % annualize volatility
 
-    % How to make port1: MS (size firms within momentum)
-    % First, extract momentum firms.
-    port1 = thisCrsp(thisCrsp.momentumRank >= mr(1) & thisCrsp.momentumRank <= mr(2), :);
-    % Second, create new sizeRank column with extracted firms.
-    port1.sizeRank(:) = NaN;
-    port1 = addRank('size', port1);
-    % Third, extract size firms.
-    port1 = port1(port1.sizeRank >= sr(1) & port1.sizeRank <= sr(2), :);
+    port1 = thisCrsp(thisCrsp.sizeRank >= sr(1) & thisCrsp.sizeRank <= sr(2), :);
+    port1.valueRank(:) = NaN;
+    port1 = addRank('value', port1);
+    port1 = port1(port1.valueRank >= vr(1) & port1.valueRank <= vr(2), :);
 
 
 %% Create table of investment weights
