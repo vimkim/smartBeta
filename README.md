@@ -1,5 +1,5 @@
 # FINE 452 Assignment 3 Smart Beta
-Author: Deon, Pegah, Jaskrit
+Author: Daehyun, Pegah, Jaskrit
 Last Modified: 2017-11-29
 Course: Applied Quantitative Finance Fall 2017 Section 1
 Project: Smart Beta (Assignment 3)
@@ -50,5 +50,5 @@ We know it is a horrible naming sense, but it is intuitively a collection of 'th
 Our strategy involves dynamic weighting based on market volatility. So we created a market index portfolio with around 4000 firms in 'crsp', weighted by relative market capitalization. This is like S&P500, expect for that it includes all the firms in 'crsp' data pool. This is just a recap of Assignment 1. Once we create the market index portfolio and get returns, we can also compute the volatility of this index.
 
 ## Why does the for loop iteration starts from 295 instead of 1 in 'runStrategy.m'?
-We are using 42-day EWMA Market Index volatility, which is derived from 252-day EWMA Market Index return, as a signal for our dynamic weight adjustment in our strategies, and those are available only after 295 days from the beginning of the dataset. In order to avoid unnecessary looping and waste of running time, we starts the for loop from i=295. The result is checked and proved to be the same as what it starts from i=1. Starting from i=1 takes more computer-time while generating NaNs.
+We are using 42-day EWMA Market Index volatility, which is derived from 252-day EWMA Market Index return, as a signal for our dynamic weight adjustment in our strategies, and those are available only after 295 days from the beginning of the dataset. In order to avoid unnecessary looping and waste of running time, we starts the for loop from i=295. The result is checked and proven to be the same as what it starts from i=1. Starting from i=1 takes more computer-time while generating NaNs.
 
