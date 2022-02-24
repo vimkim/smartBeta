@@ -5,10 +5,15 @@
 
 # FINE 452 Assignment 3 Smart Beta
 Author: Daehyun, Pegah, Jaskrit
+
 Last Modified: 2017-11-29
+
 Course: Applied Quantitative Finance Fall 2017 Section 1
+
 Project: Smart Beta (Assignment 3)
+
 Team name: Dexter
+
 
 ** This code is also uploaded on github. If you think reading long comments in MATLAB editor being too obnoxious, try typing the following url in your browser: **
 
