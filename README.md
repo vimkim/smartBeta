@@ -1,7 +1,7 @@
 
 > :warning: **This code was written when I was a Non-CS Major.**
 > 
-> Inspired by the limitations and the growth opportunities I experienced during this project, I started persuing my second degree as a CS major from March 2019 after finishing my ECON degree. Please be aware that the code might include some inefficient codes and amateur mistakes. After taking OS & DB courses I figured this code can be way more optimized. 😄 
+> Inspired by the experiences during this project, I decided to persue my second degree as a CS major from March 2019 after finishing my ECON degree. Please be aware that the code might include some inefficient codes and amateur mistakes. After taking OS & DB courses I figured this code can be way more optimized. 😄 
 
 # FINE 452 Assignment 3 Smart Beta
 Author: Daehyun, Pegah, Jaskrit
